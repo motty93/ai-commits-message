@@ -6,7 +6,7 @@ sh script/ai.sh
 
 ## (Recommended) go run
 ```bash
-OPENAI_API_KEY='sk-xxxxxxxxxx' go run main.go
+OPENAI_API_KEY='sk-xxxxx' go run main.go
 ```
 ### build
 ```bash
@@ -23,7 +23,7 @@ air
 ## vim setting
 ### build
 ```bash
-OPENAI_API_KEY='sk-xxxxxxxxxxxxxxxx' go build -o mybinary -ldflags "-X 'main.apiKey=$OPENAI_API_KEY'"
+OPENAI_API_KEY='sk-xxxxx' go build -o mybinary -ldflags "-X 'main.apiKey=$OPENAI_API_KEY'"
 
 cp ./bin/main ~/.config/generate_commit_message
 ```
