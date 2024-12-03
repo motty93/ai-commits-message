@@ -1,10 +1,10 @@
 # ai commits message
-## shell script
+## (Deprecated) shell script
 ```bash
 sh script/ai.sh
 ```
 
-## go run
+## (Recommended) go run
 ```bash
 go run main.go
 ```
