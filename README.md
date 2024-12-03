@@ -10,9 +10,9 @@ go run main.go
 ```
 ### build
 ```bash
-go build -o ./tmp/main main.go
+go build -o ./bin/main main.go
 
-./tmp/main
+./bin/main
 ```
 
 ### debug
