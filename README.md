@@ -12,7 +12,7 @@ OPENAI_API_KEY='sk-xxxxx' go run main.go
 ```
 ### build
 ```bash
-go build -o ./bin/main main.go
+OPENAI_API_KEY='sk-xxxxx' go build -o ./bin/main -ldflags "-X 'main.apiKey=$OPENAI_API_KEY'" main.go
 
 ./bin/main
 ```
@@ -25,7 +25,7 @@ air
 ## vim setting
 ### build
 ```bash
-OPENAI_API_KEY='sk-xxxxx' go build -o mybinary -ldflags "-X 'main.apiKey=$OPENAI_API_KEY'"
+OPENAI_API_KEY='sk-xxxxx' go build -o ./bin/main -ldflags "-X 'main.apiKey=$OPENAI_API_KEY'" main.go
 
 cp ./bin/main ~/.config/generate_commit_message
 ```
