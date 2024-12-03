@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 	"strings"
 )
@@ -35,7 +34,6 @@ type Choice struct {
 var apiKey string
 
 func init() {
-	apiKey = os.Getenv("OPENAI_API_KEY")
 	if apiKey == "" {
 		fmt.Println("OPENAI_API_KEY is not set")
 		return
