@@ -1,4 +1,6 @@
 # ai commits message
+![demo](https://raw.githubusercontent.com/wiki/motty93/ai-commits-message/images/ai-commit-message.gif)
+
 ## (Deprecated) shell script
 ```bash
 sh script/ai.sh
