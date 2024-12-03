@@ -21,6 +21,14 @@ air
 ```
 
 ## vim setting
+### build
+```bash
+go build -o ./bin/main main.go
+
+cp ./bin/main ~/.config/generate_commit_message
+```
+
+### .vimrc
 ```vim
 command! -nargs=0 AICommitMessage call AICommitMessage()
 function! AICommitMessage()
@@ -42,7 +50,8 @@ function! AICommitMessage()
   call setline('.', getline('.') . l:message)
 endfunction
 ```
-### vim command
+
+## vim command
 normal mode
 ```vim
 :AICommitMessage
