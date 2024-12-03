@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -42,18 +43,6 @@ func init() {
 }
 
 func main() {
-	repoRoot, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
-	if err != nil {
-		log.Fatalf("Gitリポジトリのルートディレクトリを取得できませんでした: %v", err)
-		return
-	}
-
-	repoRootPath := strings.TrimSpace(string(repoRoot))
-	if err := os.Chdir(repoRootPath); err != nil {
-		log.Fatalf("Gitリポジトリのルートディレクトリに移動できませんでした: %v", err)
-		return
-	}
-
 	diff, err := exec.Command("git", "diff", "--cached").Output()
 	if err != nil {
 		log.Fatalf("ステージングエリアの差分を取得できませんでした: %v", err)
@@ -66,7 +55,7 @@ func main() {
 	}
 
 	content := "あなたは優れたソフトウェアエンジニアです。"
-	prompt := fmt.Sprintf("以下のGitの変更差分を見て、適切なコミットメッセージを簡潔な形で、また日本語で提案してください。\n\n%s", diff)
+	prompt := fmt.Sprintf("以下のGitの変更差分を見て、適切なコミットメッセージを短く簡潔に提案してください。\n\n%s", diff)
 	request := OpenAIRequest{
 		Model: "gpt-4",
 		Messages: []Message{
@@ -81,21 +70,24 @@ func main() {
 		return
 	}
 
-	cmd := exec.Command("curl", "-s", "https://api.openai.com/v1/chat/completions",
-		"-H", "Content-Type: application/json",
-		"-H", fmt.Sprintf("Authorization: Bearer %s", apiKey),
-		"-d", string(payload))
-
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err = cmd.Run()
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(payload))
 	if err != nil {
-		log.Fatalf("OpenAI APIのリクエストに失敗しました: %v", err)
+		log.Fatalf("HTTPリクエストの作成に失敗しました：%v", err)
 		return
 	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalf("HTTPリクエストの送信に失敗しました: %v", err)
+		return
+	}
+	defer resp.Body.Close()
 
 	var response OpenAIResponse
-	if err := json.Unmarshal(out.Bytes(), &response); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		log.Fatalf("レスポンスのJSONデコードに失敗しました: %v", err)
 		return
 	}
@@ -106,5 +98,5 @@ func main() {
 	}
 
 	commitMessage := response.Choices[0].Message.Content
-	fmt.Println(commitMessage)
+	fmt.Println(strings.Trim(commitMessage, "\""))
 }
