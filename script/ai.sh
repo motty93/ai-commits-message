@@ -42,4 +42,4 @@ COMMIT_MESSAGE=$(curl -s https://api.openai.com/v1/chat/completions \
   -H "Authorization: Bearer ${OPENAI_API_KEY}" \
   -d "$JSON_PAYLOAD" | jq -r '.choices[0].message.content')
 
-echo "$COMMIT_MESSAGE"
+echo $COMMIT_MESSAGE
