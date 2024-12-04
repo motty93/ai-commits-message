@@ -53,7 +53,10 @@ func main() {
 	}
 
 	content := "あなたは優れたソフトウェアエンジニアです。"
-	prompt := fmt.Sprintf("以下のGitの変更差分を見て、適切なコミットメッセージを短く簡潔に提案してください。\n\n%s", diff)
+	prompt := fmt.Sprintf(`以下の Git の変更差分を見て、以下の形式で適切なコミットメッセージを提案してください:
+		1. プレフィックス (例: "feat:", "fix:", "refactor:", など) を含める。
+		2. メッセージは簡潔でわかりやすい形にする。
+		Git の変更差分:\n\n%s`, diff)
 	request := OpenAIRequest{
 		Model: "gpt-4",
 		Messages: []Message{
