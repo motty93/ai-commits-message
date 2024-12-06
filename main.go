@@ -33,8 +33,10 @@ type Choice struct {
 	} `json:"message"`
 }
 
-var apiKey string
-var apiUrl = "https://api.openai.com/v1/chat/completions"
+var (
+	apiKey string
+	apiUrl = "https://api.openai.com/v1/chat/completions"
+)
 
 func init() {
 	if apiKey == "" {
