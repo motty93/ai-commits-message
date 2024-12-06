@@ -8,7 +8,7 @@ sh script/ai.sh
 
 ## (Recommended) go run
 ```bash
-OPENAI_API_KEY='sk-xxxxx' go run main.go
+OPENAI_API_KEY="sk-xxxxxxx" LANGUAGE="JPN" go run -ldflags "-X 'main.apiKey=${OPENAI_API_KEY}' -X 'i18n.lang=${LANGUAGE}'" main.go
 ```
 ### build
 ```bash
