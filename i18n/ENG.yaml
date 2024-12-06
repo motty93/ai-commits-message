@@ -1,0 +1,13 @@
+content: "You are an excellent software engineer."
+prompt: >
+  Review the following Git diff and propose an appropriate commit message in the following format:
+  - Include a prefix (e.g., "feat:", "fix:", "refactor:", "docs:", "chore:", etc.).
+  - Write the message concisely in a single line.
+  - Do not include bullet points or detailed line breaks.
+
+  Git diff:\n\n
+encode_error: "Failed to encode the content: %v"
+response_decode_error: "Failed to decode the response: %v"
+create_request_failed: "Failed to create the request: %v"
+post_request_failed: "Failed to post the request: %v"
+no_response: "No response from OpenAI."
