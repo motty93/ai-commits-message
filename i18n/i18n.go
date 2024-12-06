@@ -3,24 +3,21 @@ package i18n
 import (
 	"embed"
 	"log"
-	"os"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 )
 
-type Language string
-
 const (
-	JPN Language = "JPN"
-	ENG Language = "ENG"
+	JPN         string = "JPN"
+	ENG         string = "ENG"
+	DefaultLang string = JPN
 )
 
 func SetLanguage() {
-	lang = Language(os.Getenv("LANGUAGE"))
 	if lang == "" {
-		lang = JPN
+		lang = DefaultLang
 	}
 }
 
@@ -32,12 +29,13 @@ func SetLanguageTag() {
 	}
 }
 
-//go:embed *
 var (
+	//go:embed *.yaml
 	files embed.FS
-	lang  Language
-	tag   language.Tag
-	loc   *i18n.Localizer
+
+	lang string
+	tag  language.Tag
+	loc  *i18n.Localizer
 )
 
 // WANT: new service
