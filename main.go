@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
+
+	"github.com/motty93/ai-commits-message/i18n"
 )
 
 type OpenAIRequest struct {
@@ -32,33 +34,32 @@ type Choice struct {
 }
 
 var apiKey string
+var apiUrl = "https://api.openai.com/v1/chat/completions"
 
 func init() {
 	if apiKey == "" {
 		fmt.Println("OPENAI_API_KEY is not set")
 		return
 	}
+
+	i18n.Init()
 }
 
 func main() {
 	diff, err := exec.Command("git", "diff", "--cached").Output()
 	if err != nil {
-		log.Fatalf("ステージングエリアの差分を取得できませんでした: %v", err)
+		// log.Fatalf("ステージングエリアの差分を取得できませんでした: %v", err)
+		fmt.Println("") // 空文字を返して終了
 		return
 	}
 
 	if len(diff) == 0 {
-		fmt.Println("No changes to commit")
+		fmt.Println("") // 空文字を返して終了
 		return
 	}
 
-	content := "あなたは優れたソフトウェアエンジニアです。"
-	prompt := fmt.Sprintf(`以下の Git の変更差分を見て、以下の形式で適切なコミットメッセージを提案してください:
-		- プレフィックス (例: "feat:", "fix:", "refactor:", "docs:", "chore:", など) を含める。
-		- メッセージは１行で簡潔に記述する。
-		- 箇条書きや詳細な改行は含めない。
-
-		Git の変更差分:\n\n%s`, diff)
+	content := i18n.GetText("content")
+	prompt := fmt.Sprintf(`%s%s`, i18n.GetText("prompt"), diff)
 	request := OpenAIRequest{
 		Model: "gpt-4",
 		Messages: []Message{
@@ -69,14 +70,14 @@ func main() {
 	}
 	payload, err := json.Marshal(request)
 	if err != nil {
-		log.Fatalf("リクエストのJSONエンコードに失敗しました: %v", err)
+		log.Fatalf(i18n.GetText("encode_error"), err)
 		return
 	}
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(payload))
+	req, err := http.NewRequest("POST", apiUrl, bytes.NewBuffer(payload))
 	if err != nil {
-		log.Fatalf("HTTPリクエストの作成に失敗しました：%v", err)
+		log.Fatalf(i18n.GetText("create_request_failed"), err)
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -84,19 +85,19 @@ func main() {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalf("HTTPリクエストの送信に失敗しました: %v", err)
+		log.Fatalf(i18n.GetText("post_request_failed"), err)
 		return
 	}
 	defer resp.Body.Close()
 
 	var response OpenAIResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		log.Fatalf("レスポンスのJSONデコードに失敗しました: %v", err)
+		log.Fatalf(i18n.GetText("response_decode_error"), err)
 		return
 	}
 
 	if len(response.Choices) == 0 {
-		fmt.Println("No response from OpenAI")
+		fmt.Println(i18n.GetText("no_response"))
 		return
 	}
 
