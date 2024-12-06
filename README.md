@@ -12,7 +12,7 @@ OPENAI_API_KEY='sk-xxxxx' go run main.go
 ```
 ### build
 ```bash
-OPENAI_API_KEY='sk-xxxxx' go build -o ./bin/main -ldflags "-X 'main.apiKey=$OPENAI_API_KEY'" main.go
+OPENAI_API_KEY="sk-xxxxxxx" LANGUAGE="JPN" go build -o ./bin/main -ldflags "-X 'main.apiKey=${OPENAI_API_KEY}' -X 'i18n.lang=${LANGUAGE}'" main.go
 
 ./bin/main
 ```
@@ -25,7 +25,7 @@ air
 ## vim setting
 ### build
 ```bash
-OPENAI_API_KEY='sk-xxxxx' go build -o ./bin/main -ldflags "-X 'main.apiKey=$OPENAI_API_KEY'" main.go
+OPENAI_API_KEY="sk-xxxxxxx" LANGUAGE="JPN" go build -o ./bin/main -ldflags "-X 'main.apiKey=${OPENAI_API_KEY}' -X 'i18n.lang=${LANGUAGE}'" main.go
 
 cp ./bin/main ~/.config/generate_commit_message
 ```
@@ -34,8 +34,15 @@ cp ./bin/main ~/.config/generate_commit_message
 ```vim
 command! -nargs=0 AICommitMessage call AICommitMessage()
 function! AICommitMessage()
+  " コマンドの出力を取得
   let l:message = system("~/.config/generate_commit_message 2> /dev/null")
 
+  " messageが空であれば何もしない
+  if l:message == ''
+    return
+  endif
+
+  " 出力のエラーハンドリング
   if v:shell_error != 0
     echohl ErrorMsg
     echo "Error running generate_commit_message"
@@ -45,7 +52,8 @@ function! AICommitMessage()
 
   " 出力結果の改行をtrim
   let l:message = substitute(l:message, '\n\+$', '', '')
-  " カーソル位置に挿入
+
+  " カーソル位置に挿入（改行しない）
   call setline('.', getline('.') . l:message)
 endfunction
 ```
