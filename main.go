@@ -51,22 +51,20 @@ func init() {
 func main() {
 	diff, err := exec.Command("git", "diff", "--cached").Output()
 	if err != nil {
-		// log.Fatalf("ステージングエリアの差分を取得できませんでした: %v", err)
-		fmt.Println("") // 空文字を返して終了
+		fmt.Println("")
 		return
 	}
 
 	if len(diff) == 0 {
-		fmt.Println("") // 空文字を返して終了
+		fmt.Println("")
 		return
 	}
 
-	content := i18n.GetText("content")
 	prompt := fmt.Sprintf(`%s%s`, i18n.GetText("prompt"), diff)
 	request := OpenAIRequest{
 		Model: "gpt-4",
 		Messages: []Message{
-			{Role: "system", Content: content},
+			{Role: "system", Content: i18n.GetText("content")},
 			{Role: "user", Content: prompt},
 		},
 		Temperature: 0.7,
