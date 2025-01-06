@@ -34,15 +34,12 @@ cp ./bin/main ~/.config/generate_commit_message
 ```vim
 command! -nargs=0 AICommitMessage call AICommitMessage()
 function! AICommitMessage()
-  " コマンドの出力を取得
   let l:message = system("~/.config/generate_commit_message 2> /dev/null")
 
-  " messageが空であれば何もしない
   if l:message == ''
     return
   endif
 
-  " 出力のエラーハンドリング
   if v:shell_error != 0
     echohl ErrorMsg
     echo "Error running generate_commit_message"
@@ -50,10 +47,8 @@ function! AICommitMessage()
     return
   endif
 
-  " 出力結果の改行をtrim
   let l:message = substitute(l:message, '\n\+$', '', '')
 
-  " カーソル位置に挿入（改行しない）
   call setline('.', getline('.') . l:message)
 endfunction
 ```
